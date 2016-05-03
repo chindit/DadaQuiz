@@ -1,0 +1,36 @@
+/* GENERAL */
+body{
+    font-family: ubuntu;
+}
+/* HEADER */
+header{
+    text-align: center;
+    border-bottom: 1px solid black;
+    margin-bottom: 15px;
+}
+/* CONTENT */
+#main{
+    width: 80vw;
+    margin: auto;
+}
+/* FOOTER */
+
+/* CLASSES */
+.error{
+    width: 80%;
+    margin: auto;
+    padding: 2px 6px;
+    background-color: #FF6F6F;
+    border: 1px solid red;
+    border-radius: 7px;
+}
+.info{
+    width: 80%;
+    margin: auto;
+    padding: 2px 6px;
+    background-color: #63D063;
+    border: 1px solid darkgreen;
+    border-radius: 7px;
+}
+
+

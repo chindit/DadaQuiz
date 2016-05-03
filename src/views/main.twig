@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic' rel='stylesheet' type='text/css'>
+        <link href="src/views/css/style.css" rel="stylesheet" type="text/css">
+        <title>DadaQuiz − {% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <h1>DadaQuiz</h1>
+            <h4>Vous pensez être intelligent?<br>Laissez-nous vous prouver le contraire!</h4>
+        </header>
+        <section id="main">
+            {% block content %}{% endblock %}
+        </section>
+        <footer>
+            <p>Ce site a été codé fièrement par David Lumaye</p>
+            <p>Il est valide W3C!</p>
+        </footer>
+    </body>
+</html>

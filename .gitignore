@@ -1,0 +1,5 @@
+/nbproject
+/vendor
+/composer.lock
+/cache/
+/config/config.json
