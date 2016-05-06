@@ -4,4 +4,16 @@
     
 {% block content %}
     <h3>Liste des Quiz</h3>
+    {% for quiz in quizList %}
+        <div class="quiz-box">
+            <h4>{{ quiz.name }}</h4>
+            <p>{{ quiz.description }}</p>
+            <a href="index.php?page=quiz&amp;quiz={{ quiz.id }}">Faire ce quiz</a>
+        </div>
+        {% else %}
+            <p>Malheureusement, aucun quiz n'existe :(</p>
+    {% endfor %}
+    
+    {# Pagination #}
+    {% include 'pagination.twig' %}
 {% endblock %}

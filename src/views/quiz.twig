@@ -1,0 +1,58 @@
+{% extends "main.twig" %}
+
+{% block title %}Quiz : {{ quiz.name }}{% endblock %}
+    
+{% block content %}
+    <section>
+        <h1>{{ quiz.name }}</h1>
+        <h4>{{ quiz.description }}</h4>
+    </section>
+    <form method="post" action="index.php?page=quiz&amp;quiz={{ quiz.id }}">
+    
+    {# Résolution des réponses #}
+    {% set reponses = 0 %}
+    {% for question in quiz.questions %}
+        <div class="question">
+            <h4>{{ question.question }}</h4>
+            <div class="answers">
+                {% for answer in question.answers %}
+                    {% if valided %}
+                        <p {% if answer.correct %}class="correct"{% endif %}>
+                        {# Processing selected answer #}
+                        {% if data[question.id] is defined %}
+                            {% if data[question.id] == answer.id %}
+                                {% if answer.correct %}
+                                    <img src="src/views/img/ok.png" alt="Correct">
+                                    {% set reponses = reponses+1 %}
+                                {% else %}
+                                    {# Answer selected BUT wrong #}
+                                    <img src="src/views/img/ko.png" alt="Wrong">
+                                {% endif %}{# End answer seleted #}
+                            {% endif %}
+                        {% endif %}
+                        {# In every case, we show text #}
+                        {{ answer.answer }}</p>
+                    {% else %}
+                        <input type="{{ question.type }}" name="{{ question.id }}" value="{{ answer.id }}" id="{{ answer.id }}"><label for="{{ answer.id }}">{{ answer.answer }}</label><br>
+                    {% endif %}
+                {% endfor %}
+                {# Eplanation IF valided #}
+                {% if valided %}
+                    <p class="solution">{{ question.explanation }}</p>
+                {% endif %}
+            </div>{# End of questions block #}
+        </div>
+    {% endfor %}
+    {% if valided %}
+        <div class="controls-fixed result">
+            <p>Vous avez {{ reponses }} bonnes réponses sur {{ nbQuestions }} questions.</p>
+            <p>Vous avez obtenu {{ ((reponses/data.nbQuestions)*100)|round(2) }}%</p>
+            <p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>
+        </div>
+    {% else %}
+        <div class="controls-fixed">
+            <input type="submit" name="submit" value="Soumettre">
+        </div>
+    {% endif %}
+    </form>
+{% endblock %}

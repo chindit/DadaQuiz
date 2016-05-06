@@ -23,6 +23,12 @@ else
     $page = 'src/controllers/index.php';
 
 //Including
+//Twig
+$loader = new Twig_Loader_Filesystem('src/views');
+$twig = new Twig_Environment($loader, array(
+    'cache' => 'cache',
+));
+
 try{
     require_once $page;
 } catch (Exception $e){

@@ -1,3 +1,9 @@
-<p class="error"><?= $chaine; ?></p>
-<p class="error"><b>Voici le message retourné: </b><?= $e->getMessage(); ?></p>
+{% extends "main.twig" %}
+
+{% block title %}ERREUR FATALE{% endblock %}
+    
+{% block content %}
+<p class="error">{{ chaine }}</p>
+<p class="error"><b>Voici le message retourné: </b>{{ message }}</p>
+{% endblock %}
 

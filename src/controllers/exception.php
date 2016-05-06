@@ -19,9 +19,4 @@ else{
     $chaine = 'Une exception générique s\'est produite';
 }
 
-$loader = new Twig_Loader_Filesystem('src/views');
-$twig = new Twig_Environment($loader, array(
-    'cache' => 'cache',
-));
-
-echo $twig->render('exception.twig');
+echo $twig->render('exception.twig', array('chaine' => $chaine, 'message' => $e->getMessage()));

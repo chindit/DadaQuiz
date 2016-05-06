@@ -6,7 +6,7 @@
  */
  
 abstract class Entity{
-    protected function hydrate($data){
+    public function hydrate($data){
         foreach($data as $key => $value){
             $methodName = 'set'.ucfirst($key);
             if(!method_exists($this, $methodName)){ //is_callable ne fonctionnera pas dans ce cas à cause du «abstract».

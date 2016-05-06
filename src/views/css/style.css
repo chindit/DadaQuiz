@@ -13,9 +13,42 @@ header{
     width: 80vw;
     margin: auto;
 }
+.quiz-box{
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px 20px;
+    background-color: lightgray;
+}
+.question{
+    border: 1px dotted black;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.question h4{
+    font-weight: bold;
+    font-style: italic;
+}
+.question .answers{
+    margin-left: 50px;
+}
+.question p img{
+    margin-left: -36px;
+}
+.question .answers input{
+    margin-right: 7px;
+}
+.result{
+    font-weight: bolder;
+    font-size: xx-large;
+    border: 1px dashed black;
+    width: 80%;
+    margin: auto;
+    background: lightblue;
+    border-radius: 35px;
+}
 /* FOOTER */
 
-/* CLASSES */
+/* CLASSES GENERIQUES */
 .error{
     width: 80%;
     margin: auto;
@@ -32,5 +65,18 @@ header{
     border: 1px solid darkgreen;
     border-radius: 7px;
 }
-
+.controls-fixed{
+    text-align: center;
+}
+.correct{
+    color: green;
+    font-weight: bolder;
+}
+.size-normal{
+    font-size: medium;
+}
+.solution{
+    font-style: italic;
+    color: darkblue;
+}
 
