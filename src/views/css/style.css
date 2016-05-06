@@ -18,6 +18,7 @@ header{
     border-radius: 20px;
     padding: 10px 20px;
     background-color: lightgray;
+    margin-bottom: 5px;
 }
 .question{
     border: 1px dotted black;
@@ -78,5 +79,8 @@ header{
 .solution{
     font-style: italic;
     color: darkblue;
+}
+.ariane{
+    margin-left: 10vw;
 }
 

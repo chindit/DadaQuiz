@@ -3,10 +3,8 @@
 {% block title %}Quiz : {{ quiz.name }}{% endblock %}
     
 {% block content %}
-    <section>
-        <h1>{{ quiz.name }}</h1>
-        <h4>{{ quiz.description }}</h4>
-    </section>
+    <h2>{{ quiz.name }}</h2>
+    <h4>{{ quiz.description }}</h4>
     <form method="post" action="index.php?page=quiz&amp;quiz={{ quiz.id }}">
     
     {# Résolution des réponses #}
@@ -45,7 +43,7 @@
     {% endfor %}
     {% if valided %}
         <div class="controls-fixed result">
-            <p>Vous avez {{ reponses }} bonnes réponses sur {{ nbQuestions }} questions.</p>
+            <p>Vous avez {{ reponses }} bonnes réponses sur {{ data.nbQuestions }} questions.</p>
             <p>Vous avez obtenu {{ ((reponses/data.nbQuestions)*100)|round(2) }}%</p>
             <p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>
         </div>
