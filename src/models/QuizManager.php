@@ -87,12 +87,12 @@ class QuizManager{
         $quiz = new Quiz($quizSql);
         
         //Quiz valid -> getting questions
-        $questionsList = $this->bdd->prepare('SELECT * FROM questions WHERE questions.quiz=:id');
+        $questionsList = $this->bdd->prepare('SELECT * FROM questions WHERE questions.quiz=:id ORDER BY RAND()');
         $questionsList->bindParam('id', $id, PDO::PARAM_INT);
         $questionsList->execute();
         
         //Prepare for Answers
-        $answersSql = $this->bdd->prepare('SELECT * FROM reponses WHERE reponses.question=:id');
+        $answersSql = $this->bdd->prepare('SELECT * FROM reponses WHERE reponses.question=:id ORDER BY RAND()');
         $idQuestion;
         $answersSql->bindParam('id', $idQuestion, PDO::PARAM_INT);
         
