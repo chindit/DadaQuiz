@@ -34,12 +34,13 @@ if(isset($_POST['submit'])){
         }
     }
     $valided = true; //Quiz submitted
+    
+    //STATS
+    //Count nb of questions for results
+    $data['nbQuestions'] = count($quiz->getQuestions());
+    //Count how many points we can have
+    $data['points'] = $quizManager->getPoints($quiz, $data);
 }
-var_dump($data);
-//Count nb of questions for results
-$data['nbQuestions'] = count($quiz->getQuestions());
-//Count how many points we can have
-$data['nbPoints'] = $quizManager->getPoints($quiz, $data);var_dump($data['nbPoints']);
 
 //Rendering
 echo $twig->render('quiz.twig', array('quiz' => $quiz, 'valided' => $valided, 'data' => $data));

@@ -135,40 +135,44 @@ class QuizManager{
         foreach($questions as $question){
             $answers = $question->getAnswers();
             
-            //Radio
-            if($question->getType() == 'radio'){
-                //Only 1 solution
-                foreach($answers as $answer){
-                    if($answer->getCorrect()){
-                        $points++;
-                        if(array_key_exists($question->getId(), $data) && ($answer->getId() == $data[$question->getId()])){
-                            $score++;
-                            $questionScore++;
-                        }
-                    }
-                }
-            }
-            //Checkbox
-            if($question->getType() == 'checkbox'){
-                //Multiple solutions
-                $isQuestionOk = true;
-                foreach($answers as $answer){
-                    if($answer->getCorrect()){
-                        $points++;
-                        if(array_key_exists($question->getId(), $data) && in_array($answer->getId(), $data[$question->getId()])){
-                            $score++;
-                        }
-                        else{
-                            $isQuestionOk = false;
-                        }
-                    }
-                }
-                if($isQuestionOk){
-                    $questionScore++;
-                }
-            }
+            $isQuestionOk = true; //In case of Checkbox, this var is used to check if every sub-choice is correct
             
-        }
+            //Check solution
+            foreach($answers as $answer){
+                if($answer->getCorrect()){
+                    $points++;
+                    switch($question->getType()){
+                        case 'radio':
+                            //If answered AND answer is correct, score is incremented
+                            if(array_key_exists($question->getId(), $data) && ($answer->getId() == $data[$question->getId()])){
+                                $score++;
+                                $questionScore++;
+                            }
+                            break;
+                        case 'checkbox':
+                            //If answered AND answer is correct, score is incremented BUT question in not necessarily correct
+                            if(array_key_exists($question->getId(), $data) && in_array($answer->getId(), $data[$question->getId()])){
+                                $score++;
+                            }
+                            else{
+                                //Not answered OR correct answer was not checked -> question failed
+                                $isQuestionOk = false;
+                            }
+                            break;
+                        default:
+                            throw new UnexpectedValueException('Type for question '.$question->getId().' is not valid!');
+                            break;
+                    }//End of Switch
+                }//End of Question->getCorrect()
+            }//End of answer loop
+            
+            //Adding question score in case of checkbox
+            if($question->getType() == 'checkbox' && $isQuestionOk){
+                $questionScore++;
+            }
+        }//End of Question loop
+        
+        //Return score
         return array('points' => $points, 'score' => $score, 'questions' => count($questions), 'questionsScore' => $questionScore);
     }
     

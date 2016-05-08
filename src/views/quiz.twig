@@ -60,8 +60,9 @@
     {% endfor %}
     {% if valided %}
         <div class="controls-fixed result">
-            <p>Vous avez {{ reponses }} bonnes réponses sur {{ data.nbQuestions }} questions.</p>
-            <p>Vous avez obtenu {{ ((reponses/data.nbQuestions)*100)|round(2) }}%</p>
+            <p>Vous avez {{ data.points.questionsScore }} bonnes réponses sur {{ data.points.questions }} questions.</p>
+            <p>Vous avez obtenu {{ ((data.points.questionsScore/data.points.questions)*100)|round(2) }}%</p>
+            <p>En détail, vous avez eu un score de {{ data.points.score }}/{{ data.points.points }}</p>
             <p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>
         </div>
     {% else %}
