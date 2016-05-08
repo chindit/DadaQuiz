@@ -16,18 +16,30 @@ $data = array();
 
 $quizManager = new QuizManager();
 $quiz = $quizManager->getQuiz($_GET['quiz']);
-
 if(isset($_POST['submit'])){
     foreach($_POST as $key => $val){
+        if(is_array($val)){
+            //Checkbox!
+            $subAnswers = array();
+            foreach($val as $subKey => $subVal){
+                if(is_numeric($subVal)){
+                    $subAnswers[] = $subVal;
+                }
+            }
+            $data[$key] = $subAnswers;
+        }
         if(is_numeric($key) && is_numeric($val)){
+            //Radio
             $data[$key] = $val;
         }
     }
     $valided = true; //Quiz submitted
 }
-
+var_dump($data);
 //Count nb of questions for results
 $data['nbQuestions'] = count($quiz->getQuestions());
+//Count how many points we can have
+$data['nbPoints'] = $quizManager->getPoints($quiz, $data);var_dump($data['nbPoints']);
 
 //Rendering
 echo $twig->render('quiz.twig', array('quiz' => $quiz, 'valided' => $valided, 'data' => $data));

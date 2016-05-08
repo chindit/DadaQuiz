@@ -18,20 +18,37 @@
                         <p {% if answer.correct %}class="correct"{% endif %}>
                         {# Processing selected answer #}
                         {% if data[question.id] is defined %}
-                            {% if data[question.id] == answer.id %}
-                                {% if answer.correct %}
-                                    <img src="src/views/img/ok.png" alt="Correct">
-                                    {% set reponses = reponses+1 %}
+                            {% if question.type == 'radio' %}
+                                {% if data[question.id] == answer.id %}
+                                    {% if answer.correct %}
+                                        <img src="src/views/img/ok.png" alt="Correct">
+                                        {% set reponses = reponses+1 %}
+                                    {% else %}
+                                        {# Answer selected BUT wrong #}
+                                        <img src="src/views/img/ko.png" alt="Wrong">
+                                    {% endif %}{# End answer seleted #}
+                                {% endif %}
+                                {% elseif question.type == 'checkbox' %}
+                                    {# Checkboxes #}
+                                    {% if data[question.id] is iterable %}
+                                        {# Parsing data ONLY if data is iterable #}
+                                        {% if answer.id in data[question.id] %}
+                                            {% if answer.correct %}
+                                                <img src="src/views/img/ok.png" alt="Correct">
+                                                {% set reponses = reponses+1 %}
+                                            {% else %}
+                                                <img src="src/views/img/ko.png" alt="Wrong">
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
                                 {% else %}
-                                    {# Answer selected BUT wrong #}
-                                    <img src="src/views/img/ko.png" alt="Wrong">
-                                {% endif %}{# End answer seleted #}
-                            {% endif %}
+                                    {# ERROR -> Doing nothing #}
+                                {% endif %}
                         {% endif %}
                         {# In every case, we show text #}
                         {{ answer.answer }}</p>
                     {% else %}
-                        <input type="{{ question.type }}" name="{{ question.id }}" value="{{ answer.id }}" id="{{ answer.id }}"><label for="{{ answer.id }}">{{ answer.answer }}</label><br>
+                        <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{{ answer.id }}" id="{{ answer.id }}"><label for="{{ answer.id }}">{{ answer.answer }}</label><br>
                     {% endif %}
                 {% endfor %}
                 {# Eplanation IF valided #}

@@ -111,6 +111,67 @@ class QuizManager{
         return $quiz;
     }
     
+    /**
+     * Calculate how many points we need to complete the Quiz
+     * @param Quiz $quiz
+     * @return int
+     * @throws UnexpectedValueException
+     */
+    public function getPoints(Quiz $quiz, array $data){
+        //Check type
+        if(!$quiz instanceof Quiz){
+            throw new UnexpectedValueException('A «Quiz» is needed here');
+        }
+        
+        //Initializing vars
+        $points = 0;
+        $score = 0;
+        $questionScore = 0;
+        
+        //Getting questions
+        $questions = $quiz->getQuestions();
+        
+        //Parsing questions
+        foreach($questions as $question){
+            $answers = $question->getAnswers();
+            
+            //Radio
+            if($question->getType() == 'radio'){
+                //Only 1 solution
+                foreach($answers as $answer){
+                    if($answer->getCorrect()){
+                        $points++;
+                        if(array_key_exists($question->getId(), $data) && ($answer->getId() == $data[$question->getId()])){
+                            $score++;
+                            $questionScore++;
+                        }
+                    }
+                }
+            }
+            //Checkbox
+            if($question->getType() == 'checkbox'){
+                //Multiple solutions
+                $isQuestionOk = true;
+                foreach($answers as $answer){
+                    if($answer->getCorrect()){
+                        $points++;
+                        if(array_key_exists($question->getId(), $data) && in_array($answer->getId(), $data[$question->getId()])){
+                            $score++;
+                        }
+                        else{
+                            $isQuestionOk = false;
+                        }
+                    }
+                }
+                if($isQuestionOk){
+                    $questionScore++;
+                }
+            }
+            
+        }
+        return array('points' => $points, 'score' => $score, 'questions' => count($questions), 'questionsScore' => $questionScore);
+    }
+    
     private $nbPages;
     private $bdd;
 }
