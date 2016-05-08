@@ -36,9 +36,6 @@ if(isset($_POST['submit'])){
     $valided = true; //Quiz submitted
     
     //STATS
-    //Count nb of questions for results
-    $data['nbQuestions'] = count($quiz->getQuestions());
-    //Count how many points we can have
     $data['points'] = $quizManager->getPoints($quiz, $data);
 }
 
