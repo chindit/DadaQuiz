@@ -28,7 +28,7 @@ class Sql{
     */
     protected function __construct() {
         $config = Config::getInstance();
-        $this->bdd = new PDO('mysql:host='.$config->getConfig('hostname').';dbname='.$config->getConfig('dbname').';charset=utf8', $config->getConfig('dbuser'), $config->getConfig('dbpass'));
+        $this->bdd = new PDO('mysql:host='.$config->getConfig('hostname').';dbname='.$config->getConfig('dbname').';charset=utf8', $config->getConfig('dbuser'), $config->getConfig('dbpass'), array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC));
     }
     
     /**

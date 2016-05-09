@@ -37,7 +37,7 @@ class QuizManager{
         }
         //Comptage des articles
         $config = Config::getInstance();
-        $nbArticles = $this->bdd->query('SELECT COUNT(id) AS nbItems FROM quiz')->fetch()[0];
+        $nbArticles = $this->bdd->query('SELECT COUNT(id) AS nbItems FROM quiz')->fetch(PDO::FETCH_NUM)[0];
         $this->nbPages = ceil($nbArticles/$config->getConfig('itemsPerPage'));
         //Renvoi du nombre de pages 
         return $this->nbPages;
@@ -53,7 +53,7 @@ class QuizManager{
         $query = $this->bdd->prepare('SELECT * FROM quiz ORDER BY created DESC  LIMIT :start, :limit');
         $config = Config::getInstance();
         //Page -1 étant donnée que Page 1 = Articles 0
-        $nbItemsPerPage = $config->getConfig('itemsPerPage');
+        $nbItemsPerPage = (int)$config->getConfig('itemsPerPage');
         $start = ($page-1)*$nbItemsPerPage;
         $query->bindParam('start', $start, PDO::PARAM_INT);
         $query->bindParam('limit', $nbItemsPerPage, PDO::PARAM_INT);
@@ -80,7 +80,7 @@ class QuizManager{
         $query = $this->bdd->prepare('SELECT * FROM quiz WHERE id=:id');
         $query->bindParam('id', $id, PDO::PARAM_INT);
         $query->execute();
-        $quizSql = $query->fetch(PDO::FETCH_ASSOC);
+        $quizSql = $query->fetch();
         if($quizSql === FALSE){
             throw new OutOfRangeException('L\'id du Quiz n\'est pas valide!');
         }
@@ -92,18 +92,19 @@ class QuizManager{
         $questionsList->execute();
         
         //Prepare for Answers
-        $answersSql = $this->bdd->prepare('SELECT * FROM reponses WHERE reponses.question=:id ORDER BY RAND()');
-        $idQuestion;
-        $answersSql->bindParam('id', $idQuestion, PDO::PARAM_INT);
+        $answersSql = $this->bdd->prepare('SELECT * FROM reponses WHERE reponses.question IN (SELECT id FROM questions WHERE questions.quiz = :id) ORDER BY RAND()');
+        $answersSql->bindParam('id', $id, PDO::PARAM_INT);
+        $answersSql->execute();
+        $answersList = $answersSql->fetchAll();
         
-        while($curr = $questionsList->fetch(PDO::FETCH_ASSOC)){
+        while($curr = $questionsList->fetch()){
             $question = new Question($curr);
             //Get all answers for this question
-            $idQuestion = $question->getId();
-            $answersSql->execute();
-            while($ans = $answersSql->fetch(PDO::FETCH_ASSOC)){
-                $answer = new Answer($ans);
-                $question->addAnswer($answer);
+            foreach($answersList as $key => $answer){
+                if($answer['question'] == $question->getId()){
+                    $answerObject = new Answer($answer);
+                    $question->addAnswer($answerObject);
+                }
             }
             $quiz->addQuestion($question);
         }
