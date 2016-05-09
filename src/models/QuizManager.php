@@ -164,6 +164,16 @@ class QuizManager{
                             break;
                     }//End of Switch
                 }//End of Question->getCorrect()
+                else{
+                    //We just need to remove a point if a wrong checkbox was checked
+                    if($question->getType() == 'checkbox'){
+                        if(array_key_exists($question->getId(), $data) && in_array($answer->getId(), $data[$question->getId()])){
+                            //Wrong answer!
+                            $score--; //Loosing 1pt
+                            $isQuestionOk = false; //Question is false
+                        }
+                    }
+                }
             }//End of answer loop
             
             //Adding question score in case of checkbox
@@ -174,6 +184,57 @@ class QuizManager{
         
         //Return score
         return array('points' => $points, 'score' => $score, 'questions' => count($questions), 'questionsScore' => $questionScore);
+    }
+    
+    /**
+     * Save answers into database
+     * 
+     * @param array $data
+     * @param int $quiz
+     * @return null
+     * @throws UnexpectedValueException
+     */
+    public function saveHistory($data, $quiz){
+        if(!is_array($data)){
+            throw new UnexpectedValueException('Les résultats du quiz ne sont pas valides');
+        }
+        $storedData = serialize($data);
+        $sql = $this->bdd->prepare('INSERT INTO history(quiz,data,ip) VALUES(:quiz, :data, :ip)');
+        $sql->bindParam('quiz', $quiz, PDO::PARAM_INT);
+        $sql->bindParam('data', $storedData, PDO::PARAM_STR);
+        $sql->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+        $sql->execute();
+        
+        return;
+    }
+    
+    /**
+     * Check if history exists
+     * @param type $quiz
+     * @return type
+     */
+    public function hasHistory($quiz){
+        $query = $this->bdd->prepare('SELECT COUNT(id) FROM history WHERE ip=:ip AND quiz=:quiz');
+        $query->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+        $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
+        $query->execute();
+        return ($query->fetch(PDO::FETCH_NUM)[0] > 0);
+    }
+    
+    /**
+     * Get history for Quiz $quiz
+     * @param type $quiz
+     * @return type
+     */
+    public function getHistory($quiz){
+        $query = $this->bdd->prepare('SELECT * FROM history WHERE ip=:ip AND quiz=:quiz');
+        $query->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+        $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
+        $query->execute();
+        $result = $query->fetch();
+        $data = unserialize($result['data']);
+        $data['date'] = $result['date'];
+        return $data;
     }
     
     private $nbPages;

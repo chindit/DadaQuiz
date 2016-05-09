@@ -6,9 +6,10 @@
     <h2>{{ quiz.name }}</h2>
     <h4>{{ quiz.description }}</h4>
     <form method="post" action="index.php?page=quiz&amp;quiz={{ quiz.id }}">
-    
-    {# Résolution des réponses #}
-    {% set reponses = 0 %}
+
+    {% if alreadySent %}
+        <p class="info">Vous avez déjà répondu à ce quiz le {{ data.date|date('d/m/Y à H:i:s') }}</p>
+    {% endif %}
     {% for question in quiz.questions %}
         <div class="question">
             <h4>{{ question.question }}</h4>
@@ -22,7 +23,6 @@
                                 {% if data[question.id] == answer.id %}
                                     {% if answer.correct %}
                                         <img src="src/views/img/ok.png" alt="Correct">
-                                        {% set reponses = reponses+1 %}
                                     {% else %}
                                         {# Answer selected BUT wrong #}
                                         <img src="src/views/img/ko.png" alt="Wrong">
@@ -35,7 +35,6 @@
                                         {% if answer.id in data[question.id] %}
                                             {% if answer.correct %}
                                                 <img src="src/views/img/ok.png" alt="Correct">
-                                                {% set reponses = reponses+1 %}
                                             {% else %}
                                                 <img src="src/views/img/ko.png" alt="Wrong">
                                             {% endif %}
@@ -63,7 +62,7 @@
             <p>Vous avez {{ data.points.questionsScore }} bonnes réponses sur {{ data.points.questions }} questions.</p>
             <p>Vous avez obtenu {{ ((data.points.questionsScore/data.points.questions)*100)|round(2) }}%</p>
             <p>En détail, vous avez eu un score de {{ data.points.score }}/{{ data.points.points }}</p>
-            <p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>
+            <!--<p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>-->
         </div>
     {% else %}
         <div class="controls-fixed">
