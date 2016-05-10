@@ -141,7 +141,6 @@ class QuizManager{
             //Check solution
             foreach($answers as $answer){
                 if($answer->getCorrect()){
-                    $points++;
                     switch($question->getType()){
                         case 'radio':
                             //If answered AND answer is correct, score is incremented
@@ -184,7 +183,7 @@ class QuizManager{
         }//End of Question loop
         
         //Return score
-        return array('points' => $points, 'score' => $score, 'questions' => count($questions), 'questionsScore' => $questionScore);
+        return array('points' => $this->getQuizScore($quiz->getId()), 'score' => $score, 'questions' => count($questions), 'questionsScore' => $questionScore);
     }
     
     /**
@@ -200,9 +199,12 @@ class QuizManager{
             throw new UnexpectedValueException('Les résultats du quiz ne sont pas valides');
         }
         $storedData = serialize($data);
-        $sql = $this->bdd->prepare('INSERT INTO history(quiz,data,ip) VALUES(:quiz, :data, :ip)');
-        $sql->bindParam('quiz', $quiz, PDO::PARAM_INT);
+        $score = $this->getPoints($quiz, $data)['score'];
+        $quizId = $quiz->getId();
+        $sql = $this->bdd->prepare('INSERT INTO history(quiz,data,score,ip) VALUES(:quiz, :data, :score, :ip)');
+        $sql->bindParam('quiz', $quizId, PDO::PARAM_INT);
         $sql->bindParam('data', $storedData, PDO::PARAM_STR);
+        $sql->bindParam('score', $score, PDO::PARAM_INT);
         $sql->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
         $sql->execute();
         
@@ -210,16 +212,16 @@ class QuizManager{
     }
     
     /**
-     * Check if history exists
+     * Count number of records in history
      * @param type $quiz
      * @return type
      */
-    public function hasHistory($quiz){
+    public function countHistory($quiz){
         $query = $this->bdd->prepare('SELECT COUNT(id) FROM history WHERE ip=:ip AND quiz=:quiz');
         $query->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
         $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
         $query->execute();
-        return ($query->fetch(PDO::FETCH_NUM)[0] > 0);
+        return $query->fetch(PDO::FETCH_NUM)[0];
     }
     
     /**
@@ -227,15 +229,40 @@ class QuizManager{
      * @param type $quiz
      * @return type
      */
-    public function getHistory($quiz){
-        $query = $this->bdd->prepare('SELECT * FROM history WHERE ip=:ip AND quiz=:quiz');
+    public function getHistory($id, $quiz){
+        $query = $this->bdd->prepare('SELECT * FROM history WHERE id=:id AND quiz=:quiz');
+        $query->bindParam('id', $id, PDO::PARAM_INT);
+        $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
+        $query->execute();
+        
+        $result = $query->fetch();
+        $result['data'] = unserialize($result['data']);
+        return $result;
+    }
+    
+    /**
+     * Return a list of history entry
+     * @param int $quiz
+     * @return mixed
+     */
+    public function getHistoryList($quiz){
+        $query = $this->bdd->prepare('SELECT id,date,score,quiz FROM history WHERE ip=:ip AND quiz=:quiz');
         $query->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
         $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
         $query->execute();
-        $result = $query->fetch();
-        $data = unserialize($result['data']);
-        $data['date'] = $result['date'];
-        return $data;
+        return $query->fetchAll();
+    }
+    
+    /**
+     * Count how many points we can get for a quiz
+     * @param int $quiz
+     * @return int
+     */
+    public function getQuizScore($quiz){
+        $query = $this->bdd->prepare('CALL count_points(:id)');
+        $query->bindParam('id', $quiz, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_NUM)[0];
     }
     
     private $nbPages;

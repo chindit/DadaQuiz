@@ -47,12 +47,22 @@ header{
     background: lightblue;
     border-radius: 35px;
 }
+table{
+    margin: auto;
+    width: 80vw;
+    border: 1px solid black;
+}
+table tr td,th{
+    border: 1px solid black;
+    text-align : center;
+    padding: 3px 0px;
+}
 /* FOOTER */
 
 /* CLASSES GENERIQUES */
 .error{
     width: 80%;
-    margin: auto;
+    margin: 7px auto;
     padding: 2px 6px;
     background-color: #FF6F6F;
     border: 1px solid red;
@@ -60,11 +70,16 @@ header{
 }
 .info{
     width: 80%;
-    margin: auto;
+    margin: 7px auto;
     padding: 2px 6px;
     background-color: #63D063;
     border: 1px solid darkgreen;
     border-radius: 7px;
+}
+.important{
+    font-weight: bolder;
+    font-size: x-large;
+    background: orange;
 }
 .controls-fixed{
     text-align: center;
