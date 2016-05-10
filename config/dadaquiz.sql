@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.0
+-- version 4.6.1
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 06-05-2016 a las 15:46:45
+-- Tiempo de generación: 10-05-2016 a las 16:24:21
 -- Versión del servidor: 10.1.13-MariaDB
 -- Versión de PHP: 7.0.6
 
@@ -23,16 +23,33 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `history`
+--
+
+CREATE TABLE IF NOT EXISTS `history` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `quiz` smallint(5) UNSIGNED NOT NULL,
+  `data` text NOT NULL,
+  `ip` varchar(100) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `questions`
 --
 
-CREATE TABLE `questions` (
-  `id` mediumint(8) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `questions` (
+  `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   `quiz` smallint(5) UNSIGNED NOT NULL,
   `question` varchar(250) NOT NULL,
   `explanation` text NOT NULL,
-  `type` enum('radio') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `type` enum('radio','checkbox') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_question_quiz` (`quiz`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -40,12 +57,13 @@ CREATE TABLE `questions` (
 -- Estructura de tabla para la tabla `quiz`
 --
 
-CREATE TABLE `quiz` (
-  `id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `quiz` (
+  `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `description` varchar(250) NOT NULL,
-  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -53,56 +71,15 @@ CREATE TABLE `quiz` (
 -- Estructura de tabla para la tabla `reponses`
 --
 
-CREATE TABLE `reponses` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `reponses` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `question` mediumint(8) UNSIGNED NOT NULL,
   `answer` varchar(100) NOT NULL,
-  `correct` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `correct` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_question_responses` (`question`)
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
 
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `questions`
---
-ALTER TABLE `questions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_question_quiz` (`quiz`);
-
---
--- Indices de la tabla `quiz`
---
-ALTER TABLE `quiz`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `reponses`
---
-ALTER TABLE `reponses`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_question_responses` (`question`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `questions`
---
-ALTER TABLE `questions`
-  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
---
--- AUTO_INCREMENT de la tabla `quiz`
---
-ALTER TABLE `quiz`
-  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT de la tabla `reponses`
---
-ALTER TABLE `reponses`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 --
 -- Restricciones para tablas volcadas
 --
