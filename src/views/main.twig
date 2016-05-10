@@ -12,7 +12,12 @@
             <h1>DadaQuiz</h1>
             <h4>Vous pensez être intelligent?<br>Laissez-nous vous prouver le contraire!</h4>
         </header>
-        <p class="ariane"><a href="index.php">Accueil</a></p>
+        <p class="ariane"><a href="index.php">Accueil</a>
+            {% if quiz is defined %}
+                &nbsp;&nbsp;&gt;&nbsp;&nbsp;
+                <a href="index.php?page=quiz&amp;quiz={{ quiz.id }}">Quiz</a>
+            {% endif %}
+        </p>
         <section id="main">
             {% block content %}{% endblock %}
         </section>
