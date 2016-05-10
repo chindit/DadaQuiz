@@ -37,7 +37,7 @@ if(isset($_GET['history']) && is_numeric($_GET['history'])){
     $twigData = array_merge($twigData, $historyData);
 }
 
-if(isset($_POST['submit']) && !$valided){var_dump($_POST);
+if(isset($_POST['submit']) && !$valided){
     foreach($_POST as $key => $val){
         if(is_array($val)){
             //Checkbox!
@@ -53,12 +53,28 @@ if(isset($_POST['submit']) && !$valided){var_dump($_POST);
             //Radio
             $data[$key] = $val;
         }
+        if(is_numeric($key) && !is_numeric($val)){
+            //We check if it's an «Order» question
+            $questions = $quiz->getQuestions();
+            foreach($questions as $quest){
+                if($quest->getId() == $key && $quest->getType() == 'order'){
+                    //It's an order-> checking answer
+                    $answer = $quizManager->getOrderedAnswers($quest->getId());
+                    
+                    //Putting correction into var
+                    $data[$key]['user'] = $val;
+                    $data[$key]['answer'] = $answer;
+                    
+                    break; //End of loop
+                }
+            }
+        }
     }
     $valided = true; //Quiz submitted
     
     //STATS
     $data['points'] = $quizManager->getPoints($quiz, $data);
-    
+    var_dump($data);
     //Saving scores
     $quizManager->saveHistory($data, $quiz); //$_GET is trusted.  See L19.
     

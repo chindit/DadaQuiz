@@ -22,6 +22,10 @@
             <div class="question">
                 <h4>{{ question.question }}</h4>
                 <div class="answers">
+                    {# Starting list if order #}
+                    {% if question.type == 'order' %}
+                        <ul class="sortable" id="{{ question.id }}">
+                    {% endif %}
                     {% for answer in question.answers %}
                         {% if valided %}
                             <p {% if answer.correct %}class="correct"{% endif %}>
@@ -60,6 +64,12 @@
                                         {# In this case, we show user answer #}
                                         {{ data[question.id] }}
                                         </p>
+                                    {% elseif question.type == 'order' %}
+                                        {% if data[question.id]['user'] == data[question.id]['answer'] %}
+                                            <img src="src/views/img/ok.png" alt="Correct">
+                                        {% else %}
+                                            <img src="src/views/img/ko.png" alt="Wrong">
+                                        {% endif %}
                                     {% else %}
                                     {# ERROR -> Doing nothing #}
                                     {% endif %}{# END switch question type #}
@@ -70,9 +80,20 @@
                                 {% endif %}
                             </p>
                         {% else %}
-                            <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{% if question.type == 'number' %}0{% else %}{{ answer.id }}{% endif %}" id="{{ answer.id }}"><label for="{{ answer.id }}">{% if question.type != 'number' %}{{ answer.answer }}{% endif %}</label><br>
+                            {# Special treatment for ORDER #}
+                            {% if question.type == 'order' %}
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span class="reponse">{{ answer.answer }}</span></li>
+                            {% else %}
+                                <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{% if question.type == 'number' %}0{% else %}{{ answer.id }}{% endif %}" id="{{ answer.id }}"><label for="{{ answer.id }}">{% if question.type != 'number' %}{{ answer.answer }}{% endif %}</label><br>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
+                    {# End of list IF order #}
+                    {% if question.type == 'order' %}
+                        </ul>
+                        <input type="text" value="" name="{{ question.id }}">
+                    {% endif %}
+                    
                     {# Eplanation IF valided #}
                     {% if valided %}
                         <p class="solution">{{ question.explanation }}</p>
@@ -89,7 +110,7 @@
             </div>
         {% else %}
             <div class="controls-fixed">
-                <input type="submit" name="submit" value="Soumettre">
+                <input type="submit" name="submit" id="quiz-send" value="Soumettre">
             </div>
         {% endif %}
     </form>

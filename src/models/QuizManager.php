@@ -165,6 +165,9 @@ class QuizManager{
                                 $questionScore++;
                             }
                             break;
+                        case 'order':
+                            //Do nothing.  This case is treated outside the switch
+                            break;
                         default:
                             throw new UnexpectedValueException('Type for question '.$question->getId().' is not valid!');
                             break;
@@ -180,11 +183,18 @@ class QuizManager{
                         }
                     }
                 }
+                
             }//End of answer loop
             
             //Adding question score in case of checkbox
             if($question->getType() == 'checkbox' && $isQuestionOk){
                 $questionScore++;
+            }
+            
+            //Treating «order» questions
+            if($question->getType() == 'order' && array_key_exists($question->getId(), $data) && isset($data[$question->getId()]['user']) && isset($data[$question->getId()]['answer']) && $data[$question->getId()]['user'] == $data[$question->getId()]['answer']){
+                $score++;
+                $questionScore++;  
             }
         }//End of Question loop
         
@@ -267,6 +277,13 @@ class QuizManager{
     public function getQuizScore($quiz){
         $query = $this->bdd->prepare('CALL count_points(:id)');
         $query->bindParam('id', $quiz, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_NUM)[0];
+    }
+    
+    public function getOrderedAnswers($question){
+        $query = $this->bdd->prepare('SELECT GROUP_CONCAT(reponses.answer) FROM reponses WHERE reponses.question = :question ORDER BY reponses.poids ASC ');
+        $query->bindParam('question', $question, PDO::PARAM_INT);
         $query->execute();
         return $query->fetch(PDO::FETCH_NUM)[0];
     }
