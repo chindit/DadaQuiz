@@ -83,4 +83,19 @@ header{
 .ariane{
     margin-left: 10vw;
 }
-
+.box{
+    border: 1px solid black;
+    border-style: dashed;
+    padding: 15px;
+    border-radius: 25px;
+    width: 80%;
+    margin: 15px auto;
+    background-color: lightgoldenrodyellow;
+}
+.box h5{
+    font-size: x-large;
+    font-weight: bold;
+}
+.box p a{
+    font-size: large;
+}

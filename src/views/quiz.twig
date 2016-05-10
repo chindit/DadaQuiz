@@ -5,11 +5,15 @@
 {% block content %}
     <h2>{{ quiz.name }}</h2>
     <h4>{{ quiz.description }}</h4>
+    <div class="box">
+        <h5>Historique</h5>
+        <p><a href="index.php?page=historique&quiz={{ quiz.id }}">Voir l'historique de vos réponses</a></p>
+    </div>
     <form method="post" action="index.php?page=quiz&amp;quiz={{ quiz.id }}">
 
-    {% if alreadySent %}
+    {#{% if alreadySent %}
         <p class="info">Vous avez déjà répondu à ce quiz le {{ data.date|date('d/m/Y à H:i:s') }}</p>
-    {% endif %}
+    {% endif %}#}
     {% for question in quiz.questions %}
         <div class="question">
             <h4>{{ question.question }}</h4>

@@ -17,14 +17,6 @@ $data = array();
 $quizManager = new QuizManager();
 $quiz = $quizManager->getQuiz($_GET['quiz']);
 
-//Check if submitted
-$isAlreadySent = false;
-if($quizManager->hasHistory($_GET['quiz'])){
-    $isAlreadySent = true;
-    $data = $quizManager->getHistory($_GET['quiz']);
-    $valided = true; //We show history AND disable submission
-}
-
 if(isset($_POST['submit']) && !$isAlreadySent){
     foreach($_POST as $key => $val){
         if(is_array($val)){
@@ -52,4 +44,4 @@ if(isset($_POST['submit']) && !$isAlreadySent){
 }
 
 //Rendering
-echo $twig->render('quiz.twig', array('quiz' => $quiz, 'valided' => $valided, 'data' => $data, 'alreadySent' => $isAlreadySent));
+echo $twig->render('quiz.twig', array('quiz' => $quiz, 'valided' => $valided, 'data' => $data));
