@@ -37,7 +37,7 @@ if(isset($_GET['history']) && is_numeric($_GET['history'])){
     $twigData = array_merge($twigData, $historyData);
 }
 
-if(isset($_POST['submit']) && !$valided){
+if(isset($_POST['submit']) && !$valided){var_dump($_POST);
     foreach($_POST as $key => $val){
         if(is_array($val)){
             //Checkbox!
@@ -60,7 +60,9 @@ if(isset($_POST['submit']) && !$valided){
     $data['points'] = $quizManager->getPoints($quiz, $data);
     
     //Saving scores
-    $quizManager->saveHistory($data, $quiz); //$_GET is trusted.  See L18.
+    $quizManager->saveHistory($data, $quiz); //$_GET is trusted.  See L19.
+    
+    $twigData['data'] = $data;
 }
 
 //Counting nb of records in history

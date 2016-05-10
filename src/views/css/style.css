@@ -88,6 +88,10 @@ table tr td,th{
     color: green;
     font-weight: bolder;
 }
+.wrong{
+    font-weight: bolder;
+    color: red;
+}
 .size-normal{
     font-size: medium;
 }

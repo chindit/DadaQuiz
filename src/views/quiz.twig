@@ -48,14 +48,29 @@
                                                 {% endif %}
                                             {% endif %}
                                         {% endif %}
+                                    {% elseif question.type == 'number' %}
+                                        {{ answer.answer }}
+                                        {% if data[question.id] == answer.answer %}
+                                            <p class="correct">
+                                            <img src="src/views/img/ok.png" alt="Correct">
+                                        {% else %}
+                                            <p class="wrong">
+                                            <img src="src/views/img/ko.png" alt="Wrong">
+                                        {% endif %}
+                                        {# In this case, we show user answer #}
+                                        {{ data[question.id] }}
+                                        </p>
                                     {% else %}
-                                        {# ERROR -> Doing nothing #}
-                                    {% endif %}
+                                    {# ERROR -> Doing nothing #}
+                                    {% endif %}{# END switch question type #}
+                                {% endif %}{# END data[question.id] id defined #}
+                                {% if question.type != 'number' %}
+                                    {# In case of «number», there is an inversion in the result page, so answer.answer is aleady shown #}
+                                    {{ answer.answer }}
                                 {% endif %}
-                                {# In every case, we show text #}
-                                {{ answer.answer }}</p>
-                            {% else %}
-                            <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{{ answer.id }}" id="{{ answer.id }}"><label for="{{ answer.id }}">{{ answer.answer }}</label><br>
+                            </p>
+                        {% else %}
+                            <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{% if question.type == 'number' %}0{% else %}{{ answer.id }}{% endif %}" id="{{ answer.id }}"><label for="{{ answer.id }}">{% if question.type != 'number' %}{{ answer.answer }}{% endif %}</label><br>
                         {% endif %}
                     {% endfor %}
                     {# Eplanation IF valided #}

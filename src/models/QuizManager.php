@@ -159,6 +159,12 @@ class QuizManager{
                                 $isQuestionOk = false;
                             }
                             break;
+                        case 'number':
+                            if(array_key_exists($question->getId(), $data) && ($data[$question->getId()] == $answer->getAnswer())){
+                                $score++;
+                                $questionScore++;
+                            }
+                            break;
                         default:
                             throw new UnexpectedValueException('Type for question '.$question->getId().' is not valid!');
                             break;
@@ -246,7 +252,7 @@ class QuizManager{
      * @return mixed
      */
     public function getHistoryList($quiz){
-        $query = $this->bdd->prepare('SELECT id,date,score,quiz FROM history WHERE ip=:ip AND quiz=:quiz');
+        $query = $this->bdd->prepare('SELECT id,date,score,quiz FROM history WHERE ip=:ip AND quiz=:quiz ORDER BY date DESC');
         $query->bindParam('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
         $query->bindParam('quiz', $quiz, PDO::PARAM_INT);
         $query->execute();
