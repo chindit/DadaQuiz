@@ -129,3 +129,10 @@ table tr td,th{
 .box p a{
     font-size: large;
 }
+.no-padding{
+    padding: 0px;
+    margin-left: -40px; /* For images */
+}
+.list-answer{
+    list-style: none;
+}
