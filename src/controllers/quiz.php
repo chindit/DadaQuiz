@@ -91,7 +91,7 @@ if(isset($_POST['submit']) && !$twigData['valided']){
     
     $twigData['data'] = $data;
 }
-var_dump($twigData['data']);
+
 //Counting nb of records in history
 $nbHistory = $quizManager->countHistory($_GET['quiz']);
 

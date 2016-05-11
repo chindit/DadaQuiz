@@ -281,6 +281,11 @@ class QuizManager{
         return $query->fetch(PDO::FETCH_NUM)[0];
     }
     
+    /**
+     * Return correct answers for Order type questions.
+     * @param type $question
+     * @return type
+     */
     public function getOrderedAnswers($question){
         $query = $this->bdd->prepare('SELECT GROUP_CONCAT(reponses.answer) FROM reponses WHERE reponses.question = :question ORDER BY reponses.poids ASC ');
         $query->bindParam('question', $question, PDO::PARAM_INT);
