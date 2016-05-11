@@ -1,73 +1,156 @@
 {% extends "main.twig" %}
 
 {% block title %}Quiz : {{ quiz.name }}{% endblock %}
-    
+
 {% block content %}
     <h2>{{ quiz.name }}</h2>
     <h4>{{ quiz.description }}</h4>
+    
+    {# History box #}
+    {% if not isHistory %}
+        <div class="box">
+            <h5>Historique</h5>
+            <p>Vous avez déjà fait {{ nbHistory }} fois ce quiz</p>
+            <p><a href="index.php?page=historique&amp;quiz={{ quiz.id }}">Voir l'historique de vos réponses</a></p>
+        </div>
+    {% endif %}
+    {# End of History box #}
+    
     <form method="post" action="index.php?page=quiz&amp;quiz={{ quiz.id }}">
 
-    {% if alreadySent %}
-        <p class="info">Vous avez déjà répondu à ce quiz le {{ data.date|date('d/m/Y à H:i:s') }}</p>
-    {% endif %}
-    {% for question in quiz.questions %}
-        <div class="question">
-            <h4>{{ question.question }}</h4>
-            <div class="answers">
-                {% for answer in question.answers %}
-                    {% if valided %}
-                        <p {% if answer.correct %}class="correct"{% endif %}>
-                        {# Processing selected answer #}
-                        {% if data[question.id] is defined %}
-                            {% if question.type == 'radio' %}
-                                {% if data[question.id] == answer.id %}
-                                    {% if answer.correct %}
-                                        <img src="src/views/img/ok.png" alt="Correct">
-                                    {% else %}
-                                        {# Answer selected BUT wrong #}
-                                        <img src="src/views/img/ko.png" alt="Wrong">
-                                    {% endif %}{# End answer seleted #}
-                                {% endif %}
-                                {% elseif question.type == 'checkbox' %}
-                                    {# Checkboxes #}
-                                    {% if data[question.id] is iterable %}
-                                        {# Parsing data ONLY if data is iterable #}
-                                        {% if answer.id in data[question.id] %}
+        {# Warning if user is viewing history #}
+        {% if isHistory %}
+            <p class="info important">Vous regardez votre historique</p>
+            <p class="info">Vous avez répondu à ce quiz le {{ data.date|date('d/m/Y à H:i:s') }}</p>
+        {% endif %}
+        {# End of warning #}
+        
+        {# Starting loop to show all questions #}
+        {% for question in quiz.questions %}
+            <div class="question">
+                <h4>{{ question.question }}</h4>
+                <div class="answers">
+                    {# Starting list if question type is «order» #}
+                    {% if question.type == 'order' %}
+                        <ul {% if not valided %}class="sortable" id="{{ question.id }}"{% else %}class="no-padding"{% endif %}>
+                    {% endif %}
+                    
+                    {# Starting loop to show all answers for current question #}
+                    {% for answer in question.answers %}
+                        
+                        {# If quiz is submitted, we need to highligh the result and process user's answer #}
+                        {% if valided and question.type != 'order' %}
+                            {# By default, a correct answer get the «correct» class #}
+                            <p {% if answer.correct %}class="correct"{% endif %}>
+                                {# Processing selected answer #}
+                                {% if data[question.id] is defined %}
+                                    {# We have data for this question -> precessing by Question Type #}
+                                    
+                                    {# <input type="radio"> #}
+                                    {% if question.type == 'radio' %}
+                                        {% if data[question.id] == answer.id %}
+                                            {# If this answer was selected -> showing image #}
                                             {% if answer.correct %}
                                                 <img src="src/views/img/ok.png" alt="Correct">
                                             {% else %}
+                                                {# Answer selected BUT wrong #}
                                                 <img src="src/views/img/ko.png" alt="Wrong">
+                                            {% endif %}{# End answer seleted #}
+                                        {% endif %}
+                                        
+                                    {# <input type="checkbox"> #}
+                                    {% elseif question.type == 'checkbox' %}
+                                        {% if data[question.id] is iterable %}
+                                            {# Parsing data ONLY if data is iterable (for a checkbox, we need an array, remember? #}
+                                            {% if answer.id in data[question.id] %}
+                                                {% if answer.correct %}
+                                                    <img src="src/views/img/ok.png" alt="Correct">
+                                                {% else %}
+                                                    <img src="src/views/img/ko.png" alt="Wrong">
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
-                                    {% endif %}
-                                {% else %}
-                                    {# ERROR -> Doing nothing #}
+                                        
+                                    {# <input type="number"> #}
+                                    {% elseif question.type == 'number' %}
+                                        {# We need to change the order for this type of question.  If we don't we have troubles with <p> hierarchy ;( #}
+                                        {{ answer.answer }}
+                                        
+                                        {# Same as before #}
+                                        {% if data[question.id] == answer.answer %}
+                                            <p class="correct">
+                                            <img src="src/views/img/ok.png" alt="Correct">
+                                        {% else %}
+                                            <p class="wrong">
+                                            <img src="src/views/img/ko.png" alt="Wrong">
+                                        {% endif %}
+                                        {# In this case, we show user answer because we don't know it by default #}
+                                        {{ data[question.id] }}
+                                        </p>
+                                        
+                                    {# Undefined Question Type (or order) #}
+                                    {% else %}
+                                        {# ERROR -> Doing nothing #}
+                                    {% endif %}{# END switch question type #}
+                                {% endif %}{# END answer defined #}
+                                
+                                {% if question.type != 'number' and question.type != 'order' %}
+                                    {# In case of «number», there is an inversion in the result page, so answer.answer is aleady shown #}
+                                    {{ answer.answer }}
                                 {% endif %}
+                            </p>{# End of <p>answer</p> #}
+                            
+                        {# Quiz is NOT submitted #}
+                        {% else %}
+                            {# Special treatment for ORDER #}
+                            {% if question.type == 'order' %}
+                                {% if not valided %}
+                                    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span class="reponse">{{ answer.answer }}</span></li>
+                                {% endif %}
+                            {% else %}
+                                <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{% if question.type == 'number' %}0{% else %}{{ answer.id }}{% endif %}" id="{{ answer.id }}"><label for="{{ answer.id }}">{% if question.type != 'number' %}{{ answer.answer }}{% endif %}</label><br>
+                            {% endif %}
+                        {% endif %}{# End submitted #}
+                    {% endfor %}{# End answers loop #}
+                    
+                    {# Processing «order» questions #}
+                    {% if question.type == 'order' %}
+                        {% if valided %}
+                            {% for item in data[question.id]['array'] %}
+                                <li class="list-answer 
+                                {% if data[question.id]['user'] == data[question.id]['answer'] %}
+                                    correct"><img src="src/views/img/ok.png" alt="Correct">
+                                {% else %}
+                                    wrong"><img src="src/views/img/ko.png" alt="Wrong">
+                                {% endif %}
+                                {{ item }}</li>
+                            {% endfor %}
                         {% endif %}
-                        {# In every case, we show text #}
-                        {{ answer.answer }}</p>
-                    {% else %}
-                        <input type="{{ question.type }}" name="{{ question.id }}{% if question.type == 'checkbox' %}[]{% endif %}" value="{{ answer.id }}" id="{{ answer.id }}"><label for="{{ answer.id }}">{{ answer.answer }}</label><br>
+                        </ul>
+                        <input type="hidden" value="" name="{{ question.id }}">
                     {% endif %}
-                {% endfor %}
-                {# Eplanation IF valided #}
-                {% if valided %}
-                    <p class="solution">{{ question.explanation }}</p>
-                {% endif %}
-            </div>{# End of questions block #}
-        </div>
-    {% endfor %}
-    {% if valided %}
-        <div class="controls-fixed result">
-            <p>Vous avez {{ data.points.questionsScore }} bonnes réponses sur {{ data.points.questions }} questions.</p>
-            <p>Vous avez obtenu {{ ((data.points.questionsScore/data.points.questions)*100)|round(2) }}%</p>
-            <p>En détail, vous avez eu un score de {{ data.points.score }}/{{ data.points.points }}</p>
-            <!--<p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>-->
-        </div>
-    {% else %}
-        <div class="controls-fixed">
-            <input type="submit" name="submit" value="Soumettre">
-        </div>
-    {% endif %}
+                    
+                    {# IF quiz is valided, we need to show a small explanation to the user #}
+                    {% if valided %}
+                        <p class="solution">{{ question.explanation }}</p>
+                    {% endif %}
+                </div>{# End of answers block #}
+            </div>{# End of question block #}
+        {% endfor %}{# End of questions loop #}
+        
+        {# Showing results if quiz was valided (or history, but it's the same code) #}
+        {% if valided %}
+            <div class="controls-fixed result">
+                <p>Vous avez {{ data.points.questionsScore }} bonnes réponses sur {{ data.points.questions }} questions.</p>
+                <p>Vous avez obtenu {{ ((data.points.questionsScore/data.points.questions)*100)|round(2) }}%</p>
+                <p>En détail, vous avez eu un score de {{ data.points.score }}/{{ data.points.points }}</p>
+                <p><a href="index.php?page=quiz&amp;quiz={{ quiz.id }}" class="size-nomal">Retenter ma chanche</a></p>
+            </div>
+        {# If the quiz was not valided, we show a submit button #}
+        {% else %}
+            <div class="controls-fixed">
+                <input type="submit" name="submit" id="quiz-send" value="Soumettre">
+            </div>
+        {% endif %}
     </form>
 {% endblock %}

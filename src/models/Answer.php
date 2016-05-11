@@ -47,8 +47,18 @@ class Answer extends Entity{
         return $this->question;
     }
     
+    public function setPoids($poids){
+        $this->poids = $poids;
+        return $this;
+    }
+    
+    public function getPoids(){
+        return $this->poids;
+    }
+    
     private $id;
     private $answer;
     private $question;
     private $correct;
+    private $poids;
 }

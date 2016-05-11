@@ -47,12 +47,33 @@ header{
     background: lightblue;
     border-radius: 35px;
 }
+table{
+    margin: auto;
+    width: 80vw;
+    border: 1px solid black;
+}
+table tr td,th{
+    border: 1px solid black;
+    text-align : center;
+    padding: 3px 0px;
+}
+.sortable{
+    list-style: none;
+}
+.sortable li{
+    padding-left: 25px;
+    margin-bottom: 2px;
+    max-width: 250px;
+}
+.sortable li span:not(.reponse){
+    position: absolute; margin-left: -1.3em;
+}
 /* FOOTER */
 
 /* CLASSES GENERIQUES */
 .error{
     width: 80%;
-    margin: auto;
+    margin: 7px auto;
     padding: 2px 6px;
     background-color: #FF6F6F;
     border: 1px solid red;
@@ -60,11 +81,16 @@ header{
 }
 .info{
     width: 80%;
-    margin: auto;
+    margin: 7px auto;
     padding: 2px 6px;
     background-color: #63D063;
     border: 1px solid darkgreen;
     border-radius: 7px;
+}
+.important{
+    font-weight: bolder;
+    font-size: x-large;
+    background: orange;
 }
 .controls-fixed{
     text-align: center;
@@ -72,6 +98,10 @@ header{
 .correct{
     color: green;
     font-weight: bolder;
+}
+.wrong{
+    font-weight: bolder;
+    color: red;
 }
 .size-normal{
     font-size: medium;
@@ -83,4 +113,26 @@ header{
 .ariane{
     margin-left: 10vw;
 }
-
+.box{
+    border: 1px solid black;
+    border-style: dashed;
+    padding: 15px;
+    border-radius: 25px;
+    width: 80%;
+    margin: 15px auto;
+    background-color: lightgoldenrodyellow;
+}
+.box h5{
+    font-size: x-large;
+    font-weight: bold;
+}
+.box p a{
+    font-size: large;
+}
+.no-padding{
+    padding: 0px;
+    margin-left: -40px; /* For images */
+}
+.list-answer{
+    list-style: none;
+}

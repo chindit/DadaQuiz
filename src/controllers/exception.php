@@ -14,6 +14,9 @@ else if($e instanceof BadMethodCallException){
 else if($e instanceof PDOException){
     $chaine = 'Une erreur de base de données est survenue!';
 }
+else if($e instanceof ErrorException){
+    $chaine = 'Une erreur est survenue';
+}
 else{
     //Exception par défaut
     $chaine = 'Une exception générique s\'est produite';

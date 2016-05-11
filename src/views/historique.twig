@@ -1,0 +1,26 @@
+{% extends "main.twig" %}
+
+{% block title %}Historique : {{ quiz.name }}{% endblock %}
+    
+{% block content %}
+    <h1>{{ quiz.name }}</h1>
+    
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Ponctuation</th>
+            <th>Voir</th>
+        </tr>
+    {% for item in history %}
+        <tr>
+            <td>{{ item.date|date('d/m/Y à H:i:s') }}</td>
+            <td>{{ item.score }}/{{ score }}</td>
+            <td><a href="index.php?page=quiz&amp;history={{ item.id }}&amp;quiz={{ item.quiz }}">Voir</a></td>
+        </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Hum… Il semblerait que vous n'ayez jamais fait ce quiz…</td>
+                <td colspan="3">Et si <a href="index.php?page=quiz&amp;quiz={{ quiz.id }}">vous alliez le faire?</a></td>
+            </tr>
+    {% endfor %}
+{% endblock %}
